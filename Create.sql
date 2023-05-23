@@ -3,11 +3,9 @@ use online_shop;
 
 create table if not exists indirizzi(
     via varchar(50),
-    civico int,
-    cap int,
     citta varchar(50) not null,
-    provincia varchar(50) not null,
-    primary key (via,civico,cap)
+    cap int,
+    primary key (via,citta,cap)
 );
 
 create table if not exists corrieri(
@@ -36,7 +34,8 @@ create table if not exists prodotti(
     descrizione varchar(256),
     qntdisp int not null check ( qntdisp >= 0 ),
     prezzo decimal not null check ( prezzo > 0 ),
-    primary key (idprod)
+    primary key (idprod),
+    unique (nome,modello)
 );
 
 create table if not exists stati(
@@ -52,10 +51,10 @@ create table if not exists clienti(
     cognome varchar(50) not null,
     telefono varchar(15) not null,
     via varchar(50),
-    civico int,
+    citta varchar(50),
     cap int,
     primary key (email),
-    foreign key (via,civico,cap) references indirizzi(via,civico,cap)
+    foreign key (via,citta,cap) references indirizzi(via,citta,cap)
 );
 
 create table if not exists ordini(
