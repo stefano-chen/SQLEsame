@@ -1,3 +1,4 @@
+DROP DATABASE if exists online_shop;
 create database if not exists online_shop;
 use online_shop;
 
@@ -28,14 +29,13 @@ create table if not exists metodipagamento(
 );
 
 create table if not exists prodotti(
-    idprod int auto_increment,
+    idProd int auto_increment,
     nome varchar(50) not null ,
     modello varchar(50),
     descrizione varchar(256),
-    qntdisp int not null check ( qntdisp >= 0 ),
-    prezzo decimal not null check ( prezzo > 0 ),
-    primary key (idprod),
-    unique (nome,modello)
+    qntDisp int not null check ( qntDisp >= 0 ),
+    prezzo decimal(10,2) not null check ( prezzo > 0 ),
+    primary key (idProd)
 );
 
 create table if not exists stati(
@@ -45,31 +45,40 @@ create table if not exists stati(
 );
 
 create table if not exists clienti(
-    email varchar(50),
-    password varchar(256) not null,
+    numCliente int auto_increment,
     nome varchar(50) not null,
     cognome varchar(50) not null,
     telefono varchar(15) not null,
     via varchar(50),
     citta varchar(50),
     cap int,
-    primary key (email),
+    primary key (numCliente),
     foreign key (via,citta,cap) references indirizzi(via,citta,cap)
+);
+
+create table if not exists accounts(
+    idAccount int auto_increment,
+    email varchar(50) not null,
+    password varchar(256) not null,
+    cliente int not null,
+    unique(email, password),
+    primary key (idAccount),
+    foreign key (cliente) references clienti(numCliente)
 );
 
 create table if not exists ordini(
     numord int auto_increment,
-    cliente varchar(50) not null ,
-    dataordine datetime not null,
+    account int not null ,
+    dataordine date not null,
     stato varchar(50) not null,
     metodopag varchar(50),
     ricevutapag varchar(50),
     corriere varchar(50),
     trackcode varchar(50),
-    dataritiro datetime,
-    dataconsegna datetime,
+    dataritiro date,
+    dataconsegna date,
     primary key (numord),
-    foreign key (cliente) references clienti(email),
+    foreign key (account) references accounts(idAccount),
     foreign key (stato) references stati(nome),
     foreign key (metodopag) references metodipagamento(nome),
     foreign key (corriere) references corrieri(nome)
